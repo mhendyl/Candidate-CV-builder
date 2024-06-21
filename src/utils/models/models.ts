@@ -10,8 +10,8 @@ export interface Experience {
 export interface Education {
   degree: string;
   major: string;
-  university?: string; // Optional, as it can be 'school' instead
-  school?: string; // Optional, as it can be 'university' instead
+  university?: string;
+  school?: string;
   location: string;
   startDate: string;
   endDate: string;
@@ -38,7 +38,7 @@ export interface CandidateData {
   education: Education[];
   certifications: Certification[];
   description: string;
-  references: string[]; // Assuming references is an array of strings, but it can be adjusted as needed
+  references: string[];
   linkedin: string;
   skills: Skill[];
 }

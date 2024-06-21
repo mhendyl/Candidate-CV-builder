@@ -1,26 +1,19 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import CV from './screens/CVOne';
+import Home from './screens/Home/Home';
+import CVBuilder from './screens/CVBuilder';
+import AddCandidate from './screens/addCandidate';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const AppRoutes = () => (
+  <Router>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/add-candidate" element={<AddCandidate />} />
+      <Route path="/cv-builder" element={<CVBuilder />} />
+      <Route path="/cv-preview/:id" element={<CV />} />
+    </Routes>
+  </Router>
+);
 
-export default App;
+export default AppRoutes;

@@ -22,7 +22,7 @@ const CandidateSkillsForm: React.FC<CandidateSkillsType> = ({
         <div key={index} className="border-b border-gray-300 pb-5 flex">
           <div className="w-1/2">
             <InputTextComponent
-              label='Certificate Name :'
+              label='Skills Name :'
               inputName={`certificateName${index}`}
               value={data.name}
               handleChange={(e) => { handleSkillChange(index, 'name', e) }}
@@ -31,7 +31,7 @@ const CandidateSkillsForm: React.FC<CandidateSkillsType> = ({
           </div>
           <div className="w-1/2">
             <InputTextComponent
-              label='Certificate Date :'
+              label='Skills Score :'
               inputName={`certificateDate${index}`}
               type="number"
               value={data.score}

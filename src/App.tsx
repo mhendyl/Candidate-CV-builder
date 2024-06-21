@@ -12,6 +12,7 @@ const AppRoutes = () => (
       <Route path="/add-candidate" element={<AddCandidate />} />
       <Route path="/cv-builder" element={<CVBuilder />} />
       <Route path="/cv-preview/:id" element={<CV />} />
+      <Route path="/edit-data/:id" element={<AddCandidate />} />
     </Routes>
   </Router>
 );

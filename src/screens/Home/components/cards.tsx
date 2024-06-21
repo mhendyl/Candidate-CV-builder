@@ -9,7 +9,7 @@ type CardType = {
 
 const Card: React.FC<CardType> = ({ data, index }) => {
   return (
-    <Link to={`/cv-preview/${index}`}>
+    <Link to={`/edit-data/${index}`}>
       <button className="w-1/3">
         <div className="border border-gray-700 rounded-lg text-left px-5 py-3 mb-5 mx-4">
           <h5 className="text-xl font-bold">{data?.firstName} {data?.lastName}</h5>

@@ -34,7 +34,7 @@ const CandidateCertificateForm: React.FC<CandidateEducationType> = ({
               label='Certificate Date :'
               inputName={`certificateDate${index}`}
               type="date"
-              value={data.name}
+              value={data.date}
               handleChange={(e) => { handleCertificationChange(index, 'date', e) }}
               required={true}
             />

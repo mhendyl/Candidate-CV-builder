@@ -1,5 +1,5 @@
 // CandidateForm.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CandidateData, Experience, Education, Certification, Skill } from '../../../../utils/models/models';
 import FormDetailsCandidate from '../candidateDetails';
 import CandidateExperiences from '../candidateExperience';
@@ -7,9 +7,23 @@ import CandidateEducational from '../candidateEducation';
 import CandidateCertificateForm from '../candidateCertificate';
 import CandidateSkillsForm from '../candidateSkills';
 import { defaultValue } from './defaultValue';
+import { fetchData } from '../../../../utils/helper';
+import { useParams } from 'react-router-dom';
 
 const CandidateForm: React.FC = () => {
   const [candidateData, setCandidateData] = useState<CandidateData>(defaultValue);
+  let { id } = useParams();
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await fetchData();
+      if (id) {
+        setCandidateData(data[Number(id)]);
+      }
+    };
+
+    loadData();
+  }, [id]);
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -58,6 +72,7 @@ const CandidateForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     console.log(candidateData);
   };
 

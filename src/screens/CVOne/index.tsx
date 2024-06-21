@@ -11,11 +11,6 @@ const CV: React.FC<CVOneType> = ({
   watermark,
   fontSize = 31
 }) => {
-  console.log('>> asd', backgroundColor,
-    backgroundLeft,
-    nameColor,
-    watermark,
-    fontSize);
 
   const generateHeaderLeftSide = (text: string) => {
     return (

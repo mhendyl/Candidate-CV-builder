@@ -5,18 +5,18 @@ import { CVOneType } from './models';
 
 const CV: React.FC<CVOneType> = ({
   data,
-  backgroundColor,
-  backgroundLeft,
-  nameColor,
+  backgroundColor = 'F1E5D1',
+  backgroundLeft = 'FCF5ED',
+  nameColor = '000',
   watermark,
   fontSize = 31
 }) => {
   console.log('>> asd', backgroundColor,
-  backgroundLeft,
-  nameColor,
-  watermark,
-  fontSize);
-  
+    backgroundLeft,
+    nameColor,
+    watermark,
+    fontSize);
+
   const generateHeaderLeftSide = (text: string) => {
     return (
       <h2 className='text-xl border-b-2 border-[#BBAB8C] mb-3 pb-1'>{text}</h2>
@@ -32,15 +32,20 @@ const CV: React.FC<CVOneType> = ({
     <div className='relative'>
       {watermark && (
         <p
-          className='text-gray-600 font-bold uppercase text-[100px] absolute rotate-45 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-40 break-words'>
+          className='text-gray-600 font-bold uppercase text-[100px] text-center absolute rotate-45 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-40 break-words'>
           {watermark}
         </p>
       )}
       {data?.firstName ? (
-        <div className={`p-8`} style={{backgroundColor: `#${backgroundColor}`}}>
-          <h1 className={`font-bold border-[2px] border-[#FCF5ED] text-center py-8`} style={{color: `#${nameColor}`}}>{data.firstName} {data.lastName}</h1>
+        <div className={`p-8`} style={{ backgroundColor: `#${backgroundColor}` }}>
+          <h1
+            className={`font-bold border-[2px] border-[#FCF5ED] text-center py-8`}
+            style={{ color: `#${nameColor}`, fontSize: `${fontSize}px` }}
+          >
+            {data.firstName} {data.lastName}
+          </h1>
           <div className='flex mt-5'>
-            <div className={`w-1/4 px-6 py-4 bg-[#${backgroundLeft}]`}>
+            <div className={`w-1/4 px-6 py-4`} style={{ backgroundColor: `#${backgroundLeft}` }}>
               <div id='contact' className='mb-4'>
                 {generateHeaderLeftSide('Contact')}
                 <p className='text-sm'>Email:</p>

@@ -20,13 +20,15 @@ const CVBuilder: React.FC = () => {
   const [nameFontSize, setNameFontSize] = useState<string>('30')
   useEffect(() => {
     const dataLocalStorage = localStorage.getItem('themeCv');
-    const dataToJSON = JSON.parse(dataLocalStorage ?? '') as TemplateDataInterface;
-    setBackgroundTemplate(dataToJSON.backgroundTemplate);
-    setName(dataToJSON.name);
-    setBackgroundTemplateLeft(dataToJSON.backgroundTemplateLeft);
-    setNameColor(dataToJSON.nameColor);
-    setWatermark(dataToJSON.watermark);
-    setNameFontSize(dataToJSON?.nameFontSize?.replace('px', ''));
+    if (dataLocalStorage) {
+      const dataToJSON = JSON.parse(dataLocalStorage ?? '') as TemplateDataInterface;
+      setBackgroundTemplate(dataToJSON.backgroundTemplate);
+      setName(dataToJSON.name);
+      setBackgroundTemplateLeft(dataToJSON.backgroundTemplateLeft);
+      setNameColor(dataToJSON.nameColor);
+      setWatermark(dataToJSON.watermark);
+      setNameFontSize(dataToJSON?.nameFontSize?.replace('px', ''));
+    }
   }, [])
 
   const saveCVTemplate = () => {

@@ -32,7 +32,7 @@ const Template: React.FC<TemplateProps> = ({
   return (
     <div className='relative'>
       {watermark && (
-        <p className='text-gray-600 font-bold uppercase text-[100px] absolute rotate-45 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-40 break-words'>{watermark}</p>
+        <p className='text-gray-600 font-bold text-center uppercase text-[100px] absolute rotate-45 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-40 break-words'>{watermark}</p>
       )}
       {detailDataCandidate?.firstName ? (
         <div className='p-8' style={{"backgroundColor" : backgroundColor}}>

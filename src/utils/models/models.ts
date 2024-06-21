@@ -42,3 +42,12 @@ export interface CandidateData {
   linkedin: string;
   skills: Skill[];
 }
+
+export interface ThemeInterface {
+  backgroundTemplate: string;
+  backgroundTemplateLeft: string;
+  nameColor: string;
+  name: string;
+  watermark: string;
+  nameFontSize: string;
+}

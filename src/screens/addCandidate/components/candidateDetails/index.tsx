@@ -13,7 +13,7 @@ const FormDetailsCandidate: React.FC<FormDetailsCandidateType> = ({
   handleChange
 }) => {
   return (
-    <div>
+    <div className="border-b border-gray-300 pb-5">
       <div className="flex mt-8">
         <div className='w-1/2'>
           <InputTextComponent

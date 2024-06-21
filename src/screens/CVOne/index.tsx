@@ -1,21 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { CandidateData } from '../../utils/models/models'; // Assuming you have the models defined in a separate file
-import { fetchData } from '../../utils/helper';
-import { useParams } from 'react-router-dom';
+import React from 'react';
+import { CVOneType } from './models';
 
 
-const CV: React.FC = () => {
-  const [detailDataCandidate, setDetailDataCandidate] = useState<CandidateData | null>();
-  let { id } = useParams();
-  useEffect(() => {
-    const loadData = async () => {
-      const data = await fetchData();
-      setDetailDataCandidate(data[Number(id)]);
-    };
 
-    loadData();
-  }, []);
-
+const CV: React.FC<CVOneType> = ({
+  data,
+  backgroundColor,
+  backgroundLeft,
+  nameColor,
+  watermark,
+  fontSize = 31
+}) => {
+  console.log('>> asd', backgroundColor,
+  backgroundLeft,
+  nameColor,
+  watermark,
+  fontSize);
+  
   const generateHeaderLeftSide = (text: string) => {
     return (
       <h2 className='text-xl border-b-2 border-[#BBAB8C] mb-3 pb-1'>{text}</h2>
@@ -28,27 +29,33 @@ const CV: React.FC = () => {
   }
 
   return (
-    <div>
-      {detailDataCandidate?.firstName ? (
-        <div className='bg-[#F1E5D1] p-8'>
-          <h1 className='text-3xl font-bold border-[2px] border-[#FCF5ED] text-center py-8'>{detailDataCandidate.firstName} {detailDataCandidate.lastName}</h1>
+    <div className='relative'>
+      {watermark && (
+        <p
+          className='text-gray-600 font-bold uppercase text-[100px] absolute rotate-45 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-40 break-words'>
+          {watermark}
+        </p>
+      )}
+      {data?.firstName ? (
+        <div className={`p-8`} style={{backgroundColor: `#${backgroundColor}`}}>
+          <h1 className={`font-bold border-[2px] border-[#FCF5ED] text-center py-8`} style={{color: `#${nameColor}`}}>{data.firstName} {data.lastName}</h1>
           <div className='flex mt-5'>
-            <div className='w-1/4 px-6 py-4 bg-[#FCF5ED]'>
+            <div className={`w-1/4 px-6 py-4 bg-[#${backgroundLeft}]`}>
               <div id='contact' className='mb-4'>
                 {generateHeaderLeftSide('Contact')}
                 <p className='text-sm'>Email:</p>
-                <p className='break-words'>{detailDataCandidate.email}</p>
+                <p className='break-words'>{data.email}</p>
                 <p className='text-sm'>Phone:</p>
-                <p>{detailDataCandidate.phoneNumber}</p>
+                <p>{data.phoneNumber}</p>
                 <p className='text-sm'>Address:</p>
-                <p> {detailDataCandidate.address}</p>
-                {detailDataCandidate.linkedin ? (<a href={detailDataCandidate.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>) : null}
+                <p> {data.address}</p>
+                {data.linkedin ? (<a href={data.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>) : null}
               </div>
 
               <div id="skills" className='mb-4'>
                 {generateHeaderLeftSide('Skills')}
                 <ul>
-                  {detailDataCandidate.skills.map((skill, index) => (
+                  {data.skills.map((skill, index) => (
                     <li key={index}>
                       <p>{skill.name}: {skill.score}</p>
                     </li>
@@ -59,12 +66,12 @@ const CV: React.FC = () => {
             <div className='w-3/4 py-4 px-8'>
               <div id="description" className='mb-4'>
                 {generateHeaderRightSide('Description')}
-                <p>{detailDataCandidate.description}</p>
+                <p>{data.description}</p>
               </div>
               <div id='certifications' className='mb-4'>
                 {generateHeaderRightSide('Certifications')}
                 <ul>
-                  {detailDataCandidate.certifications.map((cert, index) => (
+                  {data.certifications.map((cert, index) => (
                     <li key={index}>
                       <p>{cert.name} - {cert.date}</p>
                     </li>
@@ -74,7 +81,7 @@ const CV: React.FC = () => {
               <div id="educations" className='mb-4'>
                 {generateHeaderRightSide('Education')}
                 <ul>
-                  {detailDataCandidate.education.map((edu, index) => (
+                  {data.education.map((edu, index) => (
                     <li key={index}>
                       <h3>{edu.degree} in {edu.major}</h3>
                       <p>{edu.university || edu.school}</p>
@@ -88,7 +95,7 @@ const CV: React.FC = () => {
               <div id="experiences" className='mb-4'>
                 {generateHeaderRightSide('Experiences')}
                 <ul>
-                  {detailDataCandidate.experiences.map((experience, index) => (
+                  {data.experiences.map((experience, index) => (
                     <li key={index}>
                       <h3>{experience.title} at {experience.company}</h3>
                       <p>{experience.location}</p>

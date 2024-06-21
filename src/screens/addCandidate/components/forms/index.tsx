@@ -1,6 +1,6 @@
 // CandidateForm.tsx
-import React, { useEffect, useState } from 'react';
-import { CandidateData, Experience, Education, Certification, Skill } from '../../../../utils/models/models';
+import React, { useEffect, useRef, useState } from 'react';
+import { CandidateData, Experience, Education, Certification, Skill, ThemeInterface } from '../../../../utils/models/models';
 import FormDetailsCandidate from '../candidateDetails';
 import CandidateExperiences from '../candidateExperience';
 import CandidateEducational from '../candidateEducation';
@@ -9,21 +9,40 @@ import CandidateSkillsForm from '../candidateSkills';
 import { defaultValue } from './defaultValue';
 import { fetchData } from '../../../../utils/helper';
 import { useParams } from 'react-router-dom';
+import AddButton from '../buttonAdd';
+import { defaultValueTheme } from '../../../../utils/theme/defaultValue';
+import { fetchDataTheme } from './getThemes';
+import CV from '../../../CVOne';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const CandidateForm: React.FC = () => {
+  const pdfRef = useRef<HTMLDivElement>(null);
+
   const [candidateData, setCandidateData] = useState<CandidateData>(defaultValue);
+  const [downloadCvButton, setDownloadCvButton] = useState<boolean>(false);
+  const [theme, setTheme] = useState<ThemeInterface>(defaultValueTheme)
+  const [showCv, setShowCv] = useState<boolean>(false);
   let { id } = useParams();
   useEffect(() => {
     const loadData = async () => {
       const data = await fetchData();
       if (id) {
         setCandidateData(data[Number(id)]);
+        setDownloadCvButton(true)
       }
     };
-
     loadData();
   }, [id]);
-  
+
+  useEffect(() => {
+    const loadDataTheme = async () => {
+      const data = await fetchDataTheme();
+      setTheme(data);
+    };
+    loadDataTheme();
+  }, [])
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -70,10 +89,32 @@ const CandidateForm: React.FC = () => {
     setCandidateData({ ...candidateData, skills: newSkills });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-    console.log(candidateData);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const dataLocal = await fetchData();
+    const newDataLocal = [...dataLocal]
+    if (id) {
+      // IT MEANS IT EDITING DATA
+      newDataLocal[Number(id)] = candidateData;
+      const stringifyData = JSON.stringify(newDataLocal);
+      await localStorage.setItem('candidateData', stringifyData);
+      alert('Saved');
+      setDownloadCvButton(true);
+      scrollToTop();
+    } else {
+      // CREATEING NEW DATA
+      const lengthData = dataLocal.length;
+      newDataLocal[lengthData] = candidateData;
+      const stringifyData = JSON.stringify(newDataLocal);
+      await localStorage.setItem('candidateData', stringifyData);
+      alert('Saved');
+      setDownloadCvButton(true);
+      scrollToTop();
+    }
   };
 
   const addCandidateExperiences = () => {
@@ -91,6 +132,12 @@ const CandidateForm: React.FC = () => {
     setCandidateData({ ...candidateData, experiences: newExperiences });
   }
 
+  const removeCandidateExperiences = (index: number) => {
+    const newExperiences = [...candidateData.experiences];
+    newExperiences.splice(index, 1)
+    setCandidateData({ ...candidateData, experiences: newExperiences });
+  }
+
   const addCandidateEducation = () => {
     const newEducation = [...candidateData.education];
     const lengthNewEducation = newEducation.length;
@@ -103,6 +150,12 @@ const CandidateForm: React.FC = () => {
       description: ''
     }
     newEducation[lengthNewEducation] = emtyValueEducation;
+    setCandidateData({ ...candidateData, education: newEducation });
+  }
+
+  const removeEducation = (index: number) => {
+    const newEducation = [...candidateData.education];
+    newEducation.splice(index, 1)
     setCandidateData({ ...candidateData, education: newEducation });
   }
 
@@ -128,73 +181,131 @@ const CandidateForm: React.FC = () => {
     setCandidateData({ ...candidateData, skills: newSkills });
   }
 
+  const printCVasPdf = async () => {
+    if (pdfRef.current) {
+      const scale = 3; // Increase this to improve the quality
+      const canvas = await html2canvas(pdfRef.current, {
+        scale: scale,
+        useCORS: true,
+      });
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 210;
+      const pageHeight = 295;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      pdf.save('cv.pdf');
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit}>
-      {/* CANDIDATE DETAILS */}
-      <FormDetailsCandidate
-        candidateData={candidateData}
-        handleChange={handleChange}
-      />
-
-      {/* CANDIDATES EDUCATION */}
+    <div>
       <button
-        type='button'
-        className='px-5 py-3 bg-teal-800 rounded-md mx-10 mt-5 mb-5'
-        onClick={addCandidateEducation}
+        className={`*:items-end bg-red-900 text-white py-2 px-5 rounded-lg ${showCv ? '' : 'ml-10'} disabled:bg-slate-400 disabled:cursor-not-allowed`}
+        onClick={() => { setShowCv(!showCv) }}
+        disabled={!downloadCvButton}
       >
-        <span className='text-white'>Add Education</span>
+        {showCv ? 'Edit Data' : 'Generate CV PDF'}
       </button>
-      <CandidateEducational
-        dataEducation={candidateData.education}
-        handleEducationChange={handleEducationChange}
-      />
+      {!showCv && (
+        <p
+          className='text-xs ml-10 italic'>
+          You only able generate PDF once you complete the form and save it
+        </p>
+      )}
 
 
-      {/* CANDIDATE EXPERIENCES */}
-      <button
-        type='button'
-        className='px-5 py-3 bg-teal-800 rounded-md mx-10 mt-5 mb-5'
-        onClick={addCandidateExperiences}
-      >
-        <span className='text-white'>Add Experiences</span>
-      </button>
-      <CandidateExperiences
-        dataExperiences={candidateData.experiences}
-        handleExperienceChange={handleExperienceChange}
-      />
+      {showCv ? (
+        <div>
+          <button className='text-white bg-cyan-950 px-5 py-2 rounded-lg my-5' onClick={printCVasPdf}>
+            Download CV
+          </button>
+          <div ref={pdfRef} className='block mt-10'>
+            <CV
+              backgroundColor={theme.backgroundTemplate}
+              backgroundLeft={theme.backgroundTemplateLeft}
+              data={candidateData}
+              fontSize={theme.nameFontSize}
+              nameColor={theme.nameColor}
+              watermark={theme.watermark}
+            />
+          </div>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          {/* CANDIDATE DETAILS */}
+          <FormDetailsCandidate
+            candidateData={candidateData}
+            handleChange={handleChange}
+          />
 
-      {/* CANDIDATE CERTIFICATION */}
-      <button
-        type='button'
-        className='px-5 py-3 bg-teal-800 rounded-md mx-10 mt-5 mb-5'
-        onClick={addCandidateCertificate}
-      >
-        <span className='text-white'>Add Certification</span>
-      </button>
-      <CandidateCertificateForm
-        dataCertificate={candidateData.certifications}
-        handleCertificationChange={handleCertificationChange}
-      />
+          {/* CANDIDATES EDUCATION */}
+          <CandidateEducational
+            removeData={(index) => { removeEducation(index) }}
+            dataEducation={candidateData.education}
+            handleEducationChange={handleEducationChange}
+          />
 
-      {/* CANDIDATE SKILLS */}
-      <button
-        type='button'
-        className='px-5 py-3 bg-teal-800 rounded-md mx-10 mt-5 mb-5'
-        onClick={addSkillCandidate}
-      >
-        <span className='text-white'>Add Skill</span>
-      </button>
-      <CandidateSkillsForm
-        dataSkill={candidateData.skills}
-        handleSkillChange={handleSkillChange}
-      />
+          <AddButton
+            onClick={addCandidateEducation}
+            label='Add Education'
+          />
 
-      <button
-        type="submit"
-        className='bg-cyan-600 text-white ml-10 mt-5 px-6 py-2 mb-10 rounded-lg'>
-        Submit
-      </button>
-    </form>
+          {/* CANDIDATE EXPERIENCES */}
+          <CandidateExperiences
+            removeData={(index) => { removeCandidateExperiences(index) }}
+            dataExperiences={candidateData.experiences}
+            handleExperienceChange={handleExperienceChange}
+          />
+
+          <AddButton
+            label='Add Experiences'
+            onClick={addCandidateExperiences}
+          />
+
+          {/* CANDIDATE CERTIFICATION */}
+          <CandidateCertificateForm
+            dataCertificate={candidateData.certifications}
+            handleCertificationChange={handleCertificationChange}
+          />
+
+          <AddButton
+            onClick={addCandidateCertificate}
+            label='Add Certificate'
+          />
+
+          {/* CANDIDATE SKILLS */}
+          <CandidateSkillsForm
+            dataSkill={candidateData.skills}
+            handleSkillChange={handleSkillChange}
+          />
+
+          <AddButton
+            onClick={addSkillCandidate}
+            label='Add Skill'
+          />
+
+          <button
+            type="submit"
+            className='bg-cyan-600 text-white ml-10 mt-5 px-6 py-2 mb-10 rounded-lg block w-full'>
+            Submit
+          </button>
+        </form>
+      )
+      }
+    </div >
   );
 }
 

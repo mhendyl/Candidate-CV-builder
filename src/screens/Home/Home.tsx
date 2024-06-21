@@ -1,10 +1,19 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import Header from "./components/header";
-import { mockDataCandidates } from "./mockCandidates";
 import Card from "./components/cards";
 import { Link } from "react-router-dom";
+import { CandidateData } from "../../utils/models/models";
+import { fetchData } from "../../utils/helper";
 
 const Home: React.FC = () => {
+  const [candidateData, setCandidateData] = useState<CandidateData[]>([]);
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await fetchData();
+      setCandidateData(data);
+    };
+    loadData();
+  }, []);
   return (
     <div>
       <Header />
@@ -16,7 +25,7 @@ const Home: React.FC = () => {
             </button>
           </Link>
         </div>
-        {mockDataCandidates.length > 0 ? mockDataCandidates?.map((candidate, index) => (
+        {candidateData.length > 0 ? candidateData?.map((candidate: CandidateData, index: number) => (
           <Card data={candidate} index={index} key={index} />
         ))
           : (

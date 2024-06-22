@@ -24,12 +24,14 @@ const CandidateEducational: React.FC<CandidateEducationType> = ({
         <div key={index} className="border-b border-gray-300 pb-5">
           <div className="flex justify-between mt-5">
             <h3 className="px-10 font-bold text-2xl mt-5">Education {index + 1}</h3>
-            <button
-              type="button"
-              className="bg-red-600 text-white mr-10 px-6 py-2 rounded-md"
-              onClick={() => { removeData(index) }}>
-              Remove
-            </button>
+            {index !== 0 && (
+              <button
+                type="button"
+                className="bg-red-600 text-white mr-10 px-6 py-2 rounded-md"
+                onClick={() => { removeData(index) }}>
+                Remove
+              </button>
+            )}
           </div>
           <div className='mt-5'>
             <InputTextComponent

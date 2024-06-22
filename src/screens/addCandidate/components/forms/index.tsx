@@ -170,6 +170,12 @@ const CandidateForm: React.FC = () => {
     setCandidateData({ ...candidateData, certifications: newCertifications });
   }
 
+  const removeCandidateCertificate = (index: number) => {
+    const newCertifications = [...candidateData.certifications];
+    newCertifications.splice(index, 1)
+    setCandidateData({ ...candidateData, certifications: newCertifications });
+  }
+
   const addSkillCandidate = () => {
     const newSkills = [...candidateData.skills];
     const skillsLength = newSkills.length;
@@ -178,6 +184,12 @@ const CandidateForm: React.FC = () => {
       score: 0
     }
     newSkills[skillsLength] = emtyValue;
+    setCandidateData({ ...candidateData, skills: newSkills });
+  }
+
+  const removeSkillCandidate = (index: number) => {
+    const newSkills = [...candidateData.skills];
+    newSkills.splice(index, 1)
     setCandidateData({ ...candidateData, skills: newSkills });
   }
 
@@ -279,6 +291,7 @@ const CandidateForm: React.FC = () => {
           <CandidateCertificateForm
             dataCertificate={candidateData.certifications}
             handleCertificationChange={handleCertificationChange}
+            removeData={(index) => {removeCandidateCertificate(index)}}
           />
 
           <AddButton
@@ -290,6 +303,7 @@ const CandidateForm: React.FC = () => {
           <CandidateSkillsForm
             dataSkill={candidateData.skills}
             handleSkillChange={handleSkillChange}
+            removeData={(index) => {removeSkillCandidate(index)}}
           />
 
           <AddButton

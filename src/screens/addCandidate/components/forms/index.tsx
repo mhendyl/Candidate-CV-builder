@@ -246,12 +246,12 @@ const CandidateForm: React.FC = () => {
           </button>
           <div ref={pdfRef} className='block mt-10'>
             <CV
-              backgroundColor={theme.backgroundTemplate}
-              backgroundLeft={theme.backgroundTemplateLeft}
+              backgroundColor={theme?.backgroundTemplate}
+              backgroundLeft={theme?.backgroundTemplateLeft}
               data={candidateData}
-              fontSize={theme.nameFontSize}
-              nameColor={theme.nameColor}
-              watermark={theme.watermark}
+              fontSize={theme?.nameFontSize}
+              nameColor={theme?.nameColor}
+              watermark={theme?.watermark}
             />
           </div>
         </div>
